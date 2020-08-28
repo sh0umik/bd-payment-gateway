@@ -297,11 +297,11 @@ func (s *SslCommerz) OrderValidation(ipnValId string) (*models.IpnResponse, erro
 		return nil, err
 	}
 
-	if resp.Status != "VALID" {
-		return nil, errors.New("Transaction is not valid")
+	if resp.Status == "VALID" || resp.Status == "VALIDATED" {
+		return &resp, nil
 	}
 
-	return &resp, nil
+	return nil, errors.New(fmt.Sprintf("Transaction is not valid : %s", resp.Status))
 }
 
 func (s *SslCommerz) CheckValidation(request *models.OrderValidationRequest) (*models.OrderValidationResponse, error) {
