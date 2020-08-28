@@ -40,11 +40,9 @@ func TestCreateSession(t *testing.T) {
 		ShipState:        "Dhaka",
 		ShipPostCode:     "1000",
 		ShipCountry:      "Bangladesh",
-		MultiCardName:    []string{"mastercard", "visacard", "amexcard"},
-		ValueA:           "ref001_A",
-		ValueB:           "ref002_B",
-		ValueC:           "ref003_C",
-		ValueD:           "ref004_D",
+		MultiCardName:    []string{"bkash"},
+		ValueA:           "subject-id",
+		ValueB:           "user-id",
 	}
 
 	sessionResponse, err := paymentService.CreateSession(sessionRequest)

@@ -113,60 +113,88 @@ func (s *SslCommerz) IPNListener(request *http.Request) (*models.IpnResponse, er
 		switch key {
 		case "tran_id":
 			ipnResponse.TranId = values[0]
+			break
 		case "val_id":
 			ipnResponse.ValID = values[0]
+			break
 		case "amount":
 			ipnResponse.Amount = values[0]
+			break
 		case "card_type":
 			ipnResponse.CardType = values[0]
+			break
 		case "store_amount":
 			ipnResponse.StoreAmount = values[0]
+			break
 		case "card_no":
 			ipnResponse.CardNo = values[0]
+			break
 		case "bank_tran_id":
 			ipnResponse.BankTranId = values[0]
+			break
 		case "status":
 			ipnResponse.Status = values[0]
+			break
 		case "tran_date":
 			ipnResponse.TranDate = values[0]
+			break
 		case "currency":
 			ipnResponse.Currency = values[0]
+			break
 		case "card_issuer":
 			ipnResponse.CardIssuer = values[0]
+			break
 		case "card_brand":
 			ipnResponse.CardBrand = values[0]
+			break
 		case "card_issuer_country":
 			ipnResponse.CardIssuerCountry = values[0]
+			break
 		case "card_issuer_country_code":
 			ipnResponse.CardIssuerCountryCode = values[0]
+			break
 		case "store_id":
 			ipnResponse.StoreId = values[0]
+			break
 		case "verify_sign":
 			ipnResponse.VerifySign = values[0]
+			break
 		case "verify_key":
 			ipnResponse.VerifyKey = values[0]
+			break
 		case "cus_fax":
 			ipnResponse.CustomerFax = values[0]
+			break
 		case "currency_type":
 			ipnResponse.CurrencyType = values[0]
+			break
 		case "currency_amount":
 			ipnResponse.CurrencyAmount = values[0]
+			break
 		case "currency_rate":
 			ipnResponse.CurrencyRate = values[0]
+			break
 		case "base_fair":
 			ipnResponse.BaseFair = values[0]
+			break
 		case "value_a":
 			ipnResponse.ValueA = values[0]
+			break
 		case "value_b":
 			ipnResponse.ValueB = values[0]
+			break
 		case "value_c":
 			ipnResponse.ValueC = values[0]
+			break
 		case "value_d":
 			ipnResponse.ValueD = values[0]
+			break
 		case "risk_level":
 			ipnResponse.RiskLevel = values[0]
+			break
 		case "risk_title":
 			ipnResponse.RiskTitle = values[0]
+			break
 		}
 	}
 
