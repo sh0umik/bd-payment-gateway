@@ -2,6 +2,7 @@ package go_sslcom
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/sh0umik/go-sslcom/models"
 	"io/ioutil"
@@ -89,13 +90,19 @@ func (s *SslCommerz) CreateSession(req *models.RequestValue) (*models.SessionRes
 		return nil, err
 	}
 
-	body, _ := ioutil.ReadAll(response.Body)
+	body, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		return nil, err
+	}
 
 	// SSL Commerz api is weired , it responses with 200 even if the request fails , WTF!
 	// So check the struct not the status code !
 
 	var resp models.SessionResponse
-	json.Unmarshal(body, &resp)
+	err = json.Unmarshal(body, &resp)
+	if err != nil {
+		return nil, err
+	}
 
 	return &resp, nil
 }
@@ -249,6 +256,52 @@ func (s *SslCommerz) IPNListener(request *http.Request) (*models.IpnResponse, er
 	}*/
 
 	return &ipnResponse, nil
+}
+
+func (s *SslCommerz) OrderValidation(ipnValId string) (*models.IpnResponse, error) {
+	data := url.Values{}
+
+	data.Set("val_id", ipnValId)
+	data.Set("store_id", s.StoreId)
+	data.Set("store_passwd", s.StorePass)
+	data.Set("v", "1")
+	data.Set("format", "json")
+
+	u, _ := url.ParseRequestURI(SANDBOX_GATEWAY)
+	u.Path = ORDER_VALIDATION_URI
+	u.RawQuery = data.Encode()
+	sessionURL := u.String()
+
+	client := &http.Client{}
+	r, err := http.NewRequest("GET", sessionURL, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	r.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+	r.Header.Add("Content-Length", strconv.Itoa(len(data.Encode())))
+
+	response, err := client.Do(r)
+	if err != nil {
+		return nil, err
+	}
+
+	body, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp models.IpnResponse
+	err = json.Unmarshal(body, &resp)
+	if err != nil {
+		return nil, err
+	}
+
+	if resp.Status != "VALID" {
+		return nil, errors.New("Transaction is not valid")
+	}
+
+	return &resp, nil
 }
 
 func (s *SslCommerz) CheckValidation(request *models.OrderValidationRequest) (*models.OrderValidationResponse, error) {
