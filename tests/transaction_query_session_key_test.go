@@ -33,7 +33,7 @@ func TestTransactionQueryBySID(t *testing.T) {
 		Format:     "json",
 	}
 
-	tranResponse, err := paymentService.TransactionQueryBySID(&data)
+	tranResponse, err := paymentService.TransactionQueryBySID(&data, false)
 	if err != nil {
 		t.Log(err.Error())
 	}

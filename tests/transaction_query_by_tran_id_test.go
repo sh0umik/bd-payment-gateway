@@ -22,7 +22,7 @@ func TestTransactionQueryByTranID(t *testing.T) {
 		Format:     "json",
 	}
 
-	tranResponse, err := paymentService.TransactionQueryByTID(&data)
+	tranResponse, err := paymentService.TransactionQueryByTID(&data, false)
 	if err != nil {
 		t.Log(err.Error())
 	}

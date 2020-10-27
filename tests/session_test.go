@@ -17,9 +17,9 @@ func TestCreateSession(t *testing.T) {
 
 	sessionRequest := &models.RequestValue{
 		// Fill it in
-		TotalAmount:      "150",
+		TotalAmount:      "1050",
 		Currency:         "BDT",
-		TranID:           "REF123",
+		TranID:           "TRAN123456",
 		SuccessURL:       "http://yoursite.com/success.php",
 		FailUrl:          "http://yoursite.com/fail.php",
 		CancelURL:        "http://yoursite.com/cancel.php",
@@ -41,11 +41,12 @@ func TestCreateSession(t *testing.T) {
 		ShipPostCode:     "1000",
 		ShipCountry:      "Bangladesh",
 		MultiCardName:    []string{"bkash"},
-		ValueA:           "subject-id",
-		ValueB:           "user-id",
+		ValueA:           "706633169",
+		ValueB:           "288580",
+		ValueC: 		  "3",
 	}
 
-	sessionResponse, err := paymentService.CreateSession(sessionRequest)
+	sessionResponse, err := paymentService.CreateSession(sessionRequest, false)
 	if err != nil {
 		t.Error(err.Error())
 	}

@@ -13,6 +13,7 @@ import (
 )
 
 const SANDBOX_GATEWAY = "https://sandbox.sslcommerz.com"
+const LIVE_GATEWAY = "https://securepay.sslcommerz.com"
 const SESSION_URI = "gwprocess/v3/api.php"
 const ORDER_VALIDATION_URI = "validator/api/validationserverAPI.php"
 const TRANSACTION_QUERY_URI_TID = "validator/api/merchantTransIDvalidationAPI.php"
@@ -31,7 +32,7 @@ func GetSslCommerz(storeID string, storePass string) *SslCommerz {
 	}
 }
 
-func (s *SslCommerz) CreateSession(req *models.RequestValue) (*models.SessionResponse, error) {
+func (s *SslCommerz) CreateSession(req *models.RequestValue, isLiveStore bool) (*models.SessionResponse, error) {
 
 	data := url.Values{}
 
@@ -70,7 +71,13 @@ func (s *SslCommerz) CreateSession(req *models.RequestValue) (*models.SessionRes
 		data.Set("multi_card_name", "mastercard,visacard,amexcard,brac_visa,dbbl_visa,city_visa,ebl_visa,sbl_visa,brac_master,dbbl_master,city_master,ebl_master,sbl_master,city_amex,qcash,dbbl_nexus,bankasia,abbank,ibbl,mtbl,bkash,dbblmobilebanking,city")
 	*/
 
-	u, _ := url.ParseRequestURI(SANDBOX_GATEWAY)
+	var storeUrl string
+	if isLiveStore {
+		storeUrl = LIVE_GATEWAY
+	}else {
+		storeUrl = SANDBOX_GATEWAY
+	}
+	u, _ := url.ParseRequestURI(storeUrl)
 	u.Path = SESSION_URI
 	//u.RawQuery = data.Encode()
 
@@ -258,7 +265,7 @@ func (s *SslCommerz) IPNListener(request *http.Request) (*models.IpnResponse, er
 	return &ipnResponse, nil
 }
 
-func (s *SslCommerz) OrderValidation(ipnValId string) (*models.IpnResponse, error) {
+func (s *SslCommerz) OrderValidation(ipnValId string, isLiveStore bool) (*models.IpnResponse, error) {
 	data := url.Values{}
 
 	data.Set("val_id", ipnValId)
@@ -267,7 +274,13 @@ func (s *SslCommerz) OrderValidation(ipnValId string) (*models.IpnResponse, erro
 	data.Set("v", "1")
 	data.Set("format", "json")
 
-	u, _ := url.ParseRequestURI(SANDBOX_GATEWAY)
+	var storeUrl string
+	if isLiveStore {
+		storeUrl = LIVE_GATEWAY
+	}else {
+		storeUrl = SANDBOX_GATEWAY
+	}
+	u, _ := url.ParseRequestURI(storeUrl)
 	u.Path = ORDER_VALIDATION_URI
 	u.RawQuery = data.Encode()
 	sessionURL := u.String()
@@ -304,7 +317,7 @@ func (s *SslCommerz) OrderValidation(ipnValId string) (*models.IpnResponse, erro
 	return nil, errors.New(fmt.Sprintf("Transaction is not valid : %s", resp.Status))
 }
 
-func (s *SslCommerz) CheckValidation(request *models.OrderValidationRequest) (*models.OrderValidationResponse, error) {
+func (s *SslCommerz) CheckValidation(request *models.OrderValidationRequest, isLiveStore bool) (*models.OrderValidationResponse, error) {
 
 	data := url.Values{}
 
@@ -314,7 +327,13 @@ func (s *SslCommerz) CheckValidation(request *models.OrderValidationRequest) (*m
 	data.Set("v", strconv.Itoa(request.V))
 	data.Set("format", request.Format)
 
-	u, _ := url.ParseRequestURI(SANDBOX_GATEWAY)
+	var storeUrl string
+	if isLiveStore {
+		storeUrl = LIVE_GATEWAY
+	}else {
+		storeUrl = SANDBOX_GATEWAY
+	}
+	u, _ := url.ParseRequestURI(storeUrl)
 	u.Path = ORDER_VALIDATION_URI
 	u.RawQuery = data.Encode()
 
@@ -345,7 +364,7 @@ func (s *SslCommerz) CheckValidation(request *models.OrderValidationRequest) (*m
 	return &resp, nil
 }
 
-func (s *SslCommerz) TransactionQueryByTID(request *models.TransactionQueryRequest) (*models.TransactionQueryResponseTID, error) {
+func (s *SslCommerz) TransactionQueryByTID(request *models.TransactionQueryRequest, isLiveStore bool) (*models.TransactionQueryResponseTID, error) {
 
 	data := url.Values{}
 
@@ -355,7 +374,13 @@ func (s *SslCommerz) TransactionQueryByTID(request *models.TransactionQueryReque
 	data.Set("v", strconv.Itoa(request.V))
 	data.Set("format", request.Format)
 
-	u, _ := url.ParseRequestURI(SANDBOX_GATEWAY)
+	var storeUrl string
+	if isLiveStore {
+		storeUrl = LIVE_GATEWAY
+	}else {
+		storeUrl = SANDBOX_GATEWAY
+	}
+	u, _ := url.ParseRequestURI(storeUrl)
 	u.Path = TRANSACTION_QUERY_URI_TID
 	u.RawQuery = data.Encode()
 
@@ -388,7 +413,7 @@ func (s *SslCommerz) TransactionQueryByTID(request *models.TransactionQueryReque
 	return &resp, nil
 }
 
-func (s *SslCommerz) TransactionQueryBySID(request *models.TransactionQueryRequest) (*models.TransactionQueryResponseSID, error) {
+func (s *SslCommerz) TransactionQueryBySID(request *models.TransactionQueryRequest, isLiveStore bool) (*models.TransactionQueryResponseSID, error) {
 
 	data := url.Values{}
 
@@ -398,7 +423,13 @@ func (s *SslCommerz) TransactionQueryBySID(request *models.TransactionQueryReque
 	//data.Set("v", request.V)
 	//data.Set("format", request.Format)
 
-	u, _ := url.ParseRequestURI(SANDBOX_GATEWAY)
+	var storeUrl string
+	if isLiveStore {
+		storeUrl = LIVE_GATEWAY
+	}else {
+		storeUrl = SANDBOX_GATEWAY
+	}
+	u, _ := url.ParseRequestURI(storeUrl)
 	u.Path = TRANSACTION_QUERY_URI_SK
 	u.RawQuery = data.Encode()
 
@@ -431,7 +462,7 @@ func (s *SslCommerz) TransactionQueryBySID(request *models.TransactionQueryReque
 	return &resp, nil
 }
 
-func (s *SslCommerz) InitiateRefunding(request *models.RefundApiRequest) (models.RefundResponse, error) {
+func (s *SslCommerz) InitiateRefunding(request *models.RefundApiRequest, isLiveStore bool) (models.RefundResponse, error) {
 
 	data := url.Values{}
 
@@ -443,7 +474,13 @@ func (s *SslCommerz) InitiateRefunding(request *models.RefundApiRequest) (models
 	data.Set("refe_id", request.RefId)
 	data.Set("format", request.Format)
 
-	u, _ := url.ParseRequestURI(SANDBOX_GATEWAY)
+	var storeUrl string
+	if isLiveStore {
+		storeUrl = LIVE_GATEWAY
+	}else {
+		storeUrl = SANDBOX_GATEWAY
+	}
+	u, _ := url.ParseRequestURI(storeUrl)
 	u.Path = REFUNDING_URI
 	u.RawQuery = data.Encode()
 

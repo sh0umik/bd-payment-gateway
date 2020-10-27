@@ -28,7 +28,7 @@ func TestOrderValidation(t *testing.T) {
 		V:      1,
 	}
 
-	orderResponse, err := paymentService.CheckValidation(&data)
+	orderResponse, err := paymentService.CheckValidation(&data, false)
 
 	if err != nil {
 		t.Log(err.Error())
