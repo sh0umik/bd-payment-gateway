@@ -9,7 +9,7 @@ type BkashError struct {
 
 type Token struct {
 	TokenType     string `json:"token_type"`
-	ExpiresIn     string `json:"expires_in"`
+	ExpiresIn     int    `json:"expires_in"`
 	IdToken       string `json:"id_token"`
 	RefreshToken  string `json:"refresh_token"`
 	StatusCode    string `json:"statusCode"`
@@ -127,4 +127,9 @@ type SearchTransactionResponse struct {
 	StatusCode            string `json:"statusCode"`
 	StatusMessage         string `json:"statusMessage"`
 	TrxID                 string `json:"trxID"`
+}
+
+type CreateAgreementValidationResponse struct {
+	PaymentID string `json:"paymentID"`
+	Status    string `json:"status"`
 }
