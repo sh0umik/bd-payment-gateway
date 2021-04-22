@@ -39,6 +39,9 @@ type BkashTokenizedCheckoutService interface {
 
 	// CreateAgreementValidationListener is a handler func that receives paymentID & status
 	// as a json post request and returns CreateAgreementValidationResponse object
+	//
+	// Deprecated: CreateAgreementValidationListener id deprecated, and should not be used.
+	// Future release will drop the func.
 	CreateAgreementValidationListener(r *http.Request) (*models.CreateAgreementValidationResponse, error)
 
 	// ExecuteAgreement executes the agreement using the paymentID received from CreateAgreementValidationResponse
