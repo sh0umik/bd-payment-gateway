@@ -31,7 +31,7 @@ func TestAgreement(t *testing.T) {
 	t.Run("test CreateAgreement", func(t *testing.T) {
 		req := &models.CreateAgreementRequest{
 			Mode:           "0000",
-			PayerReference: "01537161343",
+			PayerReference: "dsfsodjf-w3y2sdjf83493-sdhfis",
 			CallbackUrl:    "https://api.shikho.net/payment",
 			Currency:       "BDT",
 			Intent:         "Shikho Subscription",
