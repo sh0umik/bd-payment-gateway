@@ -1,10 +1,10 @@
-package go_sslcom
+package sslcom
 
 import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/sh0umik/go-sslcom/models"
+	"github.com/sh0umik/bd-payment-gateway/sslcom/models"
 	"io/ioutil"
 	"net/http"
 	"net/url"

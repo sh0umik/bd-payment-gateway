@@ -1,5 +1,3 @@
-module github.com/sh0umik/go-sslcom
+module github.com/sh0umik/bd-payment-gateway
 
-go 1.13
-
-require github.com/gin-gonic/gin v1.6.3
+go 1.15

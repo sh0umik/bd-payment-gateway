@@ -1,8 +1,8 @@
 package tests
 
 import (
-	payment "github.com/sh0umik/go-sslcom"
-	"github.com/sh0umik/go-sslcom/models"
+	"github.com/sh0umik/bd-payment-gateway/sslcom"
+	models2 "github.com/sh0umik/bd-payment-gateway/sslcom/models"
 	"os"
 	"testing"
 )
@@ -23,10 +23,10 @@ func TestTransactionQueryBySID(t *testing.T) {
 	storeId := os.Getenv("SSLCOM_STORE_ID")
 	storePass := os.Getenv("SSLCOM_STORE_PASSWORD")
 
-	sslCom := payment.GetSslCommerz(storeId, storePass)
-	paymentService := payment.PaymentService(sslCom)
+	sslCom := sslcom.GetSslCommerz(storeId, storePass)
+	paymentService := sslcom.PaymentService(sslCom)
 
-	data := models.TransactionQueryRequest{
+	data := models2.TransactionQueryRequest{
 		SessionKey: "017453EB886ffDD96218F50704D588BE4C",
 		TranId:     "REF123",
 		V:          1,

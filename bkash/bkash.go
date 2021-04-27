@@ -1,11 +1,11 @@
-package go_sslcom
+package bkash
 
 import (
 	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/sh0umik/go-sslcom/models"
+	"github.com/sh0umik/bd-payment-gateway/bkash/models"
 	"io/ioutil"
 	"net/http"
 	"net/url"

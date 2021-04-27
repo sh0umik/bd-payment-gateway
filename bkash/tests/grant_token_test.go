@@ -1,7 +1,7 @@
-package bkash
+package tests
 
 import (
-	payment "github.com/sh0umik/go-sslcom"
+	"github.com/sh0umik/bd-payment-gateway/bkash"
 	"os"
 	"testing"
 )
@@ -12,8 +12,8 @@ func TestGrantToken(t *testing.T) {
 	appKey := os.Getenv("BKASH_APP_KEY")
 	appSecret := os.Getenv("BKASH_APP_SECRET")
 
-	bkash := payment.GetBkash(username, password, appKey, appSecret)
-	paymentService := payment.BkashTokenizedCheckoutService(bkash)
+	bkash := bkash.GetBkash(username, password, appKey, appSecret)
+	paymentService := bkash.BkashTokenizedCheckoutService(bkash)
 
 	token, err := paymentService.GrantToken(false)
 	if err != nil {

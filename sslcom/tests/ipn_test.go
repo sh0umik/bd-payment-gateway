@@ -1,9 +1,6 @@
 package tests
 
 import (
-	"github.com/gin-gonic/gin"
-	payment "github.com/sh0umik/go-sslcom"
-	"os"
 	"testing"
 )
 
@@ -47,14 +44,12 @@ curl -X POST localhost:8080/ipn -d 'tran_id=5a16c68b23783&val_id=1711231900331kH
 
 func TestIPN(t *testing.T) {
 
-	storeId := os.Getenv("SSLCOM_STORE_ID")
-	storePass := os.Getenv("SSLCOM_STORE_PASSWORD")
+	//storeId := os.Getenv("SSLCOM_STORE_ID")
+	//storePass := os.Getenv("SSLCOM_STORE_PASSWORD")
 
-	sslCom := payment.GetSslCommerz(storeId, storePass)
+	//sslCom := sslcom.GetSslCommerz(storeId, storePass)
 
-	router := gin.Default()
-
-	router.POST("/ipn", func(c *gin.Context) {
+	/*http.POST("/ipn", func(c *gin.Context) {
 
 		t.Log(c.Request.Form)
 		t.Log(c.Request.URL.Query())
@@ -69,5 +64,5 @@ func TestIPN(t *testing.T) {
 		t.Log("IPN TESTING RESPONSE : ", ipnResp)
 
 	})
-	router.Run(":8080")
+	router.Run(":8080")*/
 }
