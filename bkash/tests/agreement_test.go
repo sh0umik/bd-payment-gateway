@@ -13,8 +13,8 @@ func TestAgreement(t *testing.T) {
 	appKey := os.Getenv("BKASH_APP_KEY")
 	appSecret := os.Getenv("BKASH_APP_SECRET")
 
-	bkash := bkash.GetBkash(username, password, appKey, appSecret)
-	paymentService := bkash.BkashTokenizedCheckoutService(bkash)
+	bkashService := bkash.GetBkash(username, password, appKey, appSecret)
+	paymentService := bkash.BkashTokenizedCheckoutService(bkashService)
 
 	token, err := paymentService.GrantToken(false)
 	if err != nil {
