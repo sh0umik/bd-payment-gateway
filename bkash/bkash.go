@@ -2,13 +2,17 @@ package bkash
 
 import (
 	"bytes"
+	"crypto/x509"
+	"encoding/base64"
 	"encoding/json"
+	"encoding/pem"
 	"errors"
 	"fmt"
 	"github.com/sh0umik/bd-payment-gateway/bkash/models"
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"reflect"
 	"strconv"
 )
 
@@ -495,4 +499,51 @@ func (b *Bkash) ExecutePayment(request *models.ExecutePaymentRequest, token *mod
 	}
 
 	return &resp, nil
+}
+
+// buildSignature returns a byte array containing a signature usable for signature verification
+func buildSignature(msg *models.WebhookData) []byte {
+	var builtSignature bytes.Buffer
+	signableKeys := []string{"Message", "MessageId", "Subject", "SubscribeURL", "Timestamp", "Token", "TopicArn", "Type"}
+	for _, key := range signableKeys {
+		reflectedStruct := reflect.ValueOf(msg)
+		field := reflect.Indirect(reflectedStruct).FieldByName(key)
+		value := field.String()
+		if field.IsValid() && value != "" {
+			builtSignature.WriteString(key + "\n")
+			builtSignature.WriteString(value + "\n")
+		}
+	}
+	return builtSignature.Bytes()
+}
+
+// IsMessageSignatureValid validates bkash IPN message signature. Returns true, nil if ok,
+// otherwise returns false, error
+func IsMessageSignatureValid(msg *models.WebhookData) error {
+	resp, err := http.Get(msg.SigningCertURL)
+	if err != nil {
+		return err
+	}
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return err
+	}
+
+	p, _ := pem.Decode(body)
+	cert, err := x509.ParseCertificate(p.Bytes)
+	if err != nil {
+		return err
+	}
+
+	base64DecodedSignature, err := base64.StdEncoding.DecodeString(msg.Signature)
+	if err != nil {
+		return err
+	}
+
+	if err := cert.CheckSignature(x509.SHA1WithRSA, buildSignature(msg), base64DecodedSignature); err != nil {
+		return err
+	}
+
+	return nil
 }
