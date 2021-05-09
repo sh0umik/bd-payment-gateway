@@ -1,7 +1,7 @@
 package bkash
 
 import (
-	 "github.com/sh0umik/bd-payment-gateway/bkash/models"
+	"github.com/sh0umik/bd-payment-gateway/bkash/models"
 	"net/http"
 )
 
@@ -35,6 +35,6 @@ type BkashTokenizedCheckoutService interface {
 	// Mode value should be "0001".
 	CreatePayment(request *models.CreatePaymentRequest, token *models.Token, isLiveStore bool) (*models.CreatePaymentResponse, error)
 
-	// ExecuteAgreement executes the agreement using the paymentID received from CreateAgreementValidationResponse
+	// ExecutePayment executes the agreement using the paymentID received from CreateAgreementValidationResponse
 	ExecutePayment(request *models.ExecutePaymentRequest, token *models.Token, isLiveStore bool) (*models.ExecutePaymentResponse, error)
 }
