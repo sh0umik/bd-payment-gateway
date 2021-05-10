@@ -13,6 +13,7 @@ type WebhookData struct {
 	Signature        string    `json:"Signature"`
 	SigningCertURL   string    `json:"SigningCertURL"`
 	UnsubscribeURL   string    `json:"UnsubscribeURL"`
+	SubscribeURL     string    `json:"SubscribeURL"`
 }
 
 type Message struct {
