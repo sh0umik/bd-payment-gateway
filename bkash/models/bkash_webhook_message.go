@@ -1,18 +1,18 @@
 package models
 
 type WebhookData struct {
-	Type             string `json:"Type"`
-	MessageId        string `json:"MessageId"`
-	Token            string `json:"Token"`
-	TopicArn         string `json:"TopicArn"`
-	Message          string `json:"Message"`
-	Timestamp        string `json:"Timestamp"`
-	SignatureVersion string `json:"SignatureVersion"`
-	Signature        string `json:"Signature"`
-	SigningCertURL   string `json:"SigningCertURL"`
-	UnsubscribeURL   string `json:"UnsubscribeURL"`
-	SubscribeURL     string `json:"SubscribeURL"`
-	Subject          string `json:"Subject"`
+	Type             string      `json:"Type"`
+	MessageId        string      `json:"MessageId"`
+	Token            string      `json:"Token"`
+	TopicArn         string      `json:"TopicArn"`
+	Message          interface{} `json:"Message"`
+	Timestamp        string      `json:"Timestamp"`
+	SignatureVersion string      `json:"SignatureVersion"`
+	Signature        string      `json:"Signature"`
+	SigningCertURL   string      `json:"SigningCertURL"`
+	UnsubscribeURL   string      `json:"UnsubscribeURL"`
+	SubscribeURL     string      `json:"SubscribeURL"`
+	Subject          string      `json:"Subject"`
 }
 
 type Message struct {
