@@ -513,9 +513,12 @@ func getMessageBytesToSign(msg *models.WebhookData) []byte {
 
 // buildNotificationStringToSign builds message of Notification type
 func buildNotificationStringToSign(msg *models.WebhookData) string {
+	b, _ := json.Marshal(msg.Message)
+	message := string(b)
+
 	var stringToSign string
 	stringToSign = "Message\n"
-	stringToSign += msg.Message + "\n"
+	stringToSign += message + "\n"
 	stringToSign += "MessageId\n"
 	stringToSign += msg.MessageId + "\n"
 	if msg.Subject != "" {
@@ -535,7 +538,7 @@ func buildNotificationStringToSign(msg *models.WebhookData) string {
 func buildSubscriptionStringToSign(msg *models.WebhookData) string {
 	var stringToSign string
 	stringToSign = "Message\n"
-	stringToSign += msg.Message + "\n"
+	stringToSign += msg.Message.(string) + "\n"
 	stringToSign += "MessageId\n"
 	stringToSign += msg.MessageId + "\n"
 	stringToSign += "SubscribeURL\n"
@@ -557,6 +560,9 @@ func IsMessageSignatureValid(msg *models.WebhookData) error {
 	resp, err := http.Get(msg.SigningCertURL)
 	if err != nil {
 		return err
+	}
+	if resp.StatusCode != http.StatusOK {
+		return errors.New("unable to get certificate err: " + resp.Status)
 	}
 
 	body, err := ioutil.ReadAll(resp.Body)
