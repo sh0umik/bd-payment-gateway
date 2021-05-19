@@ -10,18 +10,20 @@ import (
 func TestMessageSignatureValidation(t *testing.T) {
 	notificationJson := `
 	{
-		"Type" : "SubscriptionConfirmation",
-		"MessageId" : "165545c9-2a5c-472c-8df2-7ff2be2b3b1b",
-		"Token" : "2336412f37fb687f5d51e6e241d09c805a5a57b30d712f794cc5f6a988666d92768dd60a747ba6f3beb71854e285d6ad02428b09ceece29417f1f02d609c582afbacc99c583a916b9981dd2728f4ae6fdb82efd087cc3b7849e05798d2d2785c03b0879594eeac82c01f235d0e717736",
-		"TopicArn" : "arn:aws:sns:us-west-2:123456789012:MyTopic",
-		"Message" : "You have chosen to subscribe to the topic arn:aws:sns:us-west-2:123456789012:MyTopic.\nTo confirm the subscription, visit the SubscribeURL included in this message.",
-		"SubscribeURL" : "https://sns.us-west-2.amazonaws.com/?Action=ConfirmSubscription&TopicArn=arn:aws:sns:us-west-2:123456789012:MyTopic&Token=2336412f37fb687f5d51e6e241d09c805a5a57b30d712f794cc5f6a988666d92768dd60a747ba6f3beb71854e285d6ad02428b09ceece29417f1f02d609c582afbacc99c583a916b9981dd2728f4ae6fdb82efd087cc3b7849e05798d2d2785c03b0879594eeac82c01f235d0e717736",
-		"Timestamp" : "2012-04-26T20:45:04.751Z",
-		"SignatureVersion" : "1",
-		"Signature" : "EXAMPLEpH+DcEwjAPg8O9mY8dReBSwksfg2S7WKQcikcNKWLQjwu6A4VbeS0QHVCkhRS7fUQvi2egU3N858fiTDN6bkkOxYDVrY0Ad8L10Hs3zH81mtnPk5uvvolIC1CXGu43obcgFxeL3khZl8IKvO61GWB6jI9b5+gLPoBc1Q=",
-		"SigningCertURL" : "https://sns.us-west-2.amazonaws.com/SimpleNotificationService-f3ecfb7224c7233fe7bb5f59f96de52f.pem"
+	  "Type": "Notification",
+	  "MessageId": "c92ab22a-0aad-5643-a7c5-eb34dbe36d7d",
+	  "Token": "",
+	  "TopicArn": "arn:aws:sns:ap-southeast-1:988117108360:MockBkash",
+	  "Message": "{\n       \"dateTime\":\"20180419122246\",\n       \"debitMSISDN\":\"8801700000001\",\n       \"creditOrganizationName\":\"Org 01\",\n       \"creditShortCode\":\"ORG001\",\n       \"trxID\":\"4J420ANOXC\",\n       \"transactionStatus\":\"Completed\",\n       \"transactionType\":\"1003\",\n       \"amount\":\"100\",\n       \"currency\":\"BDT\",\n       \"transactionReference\":\"User inputed reference value.\" \n}",
+	  "Timestamp": "2021-05-19T08:40:46.447Z",
+	  "SignatureVersion": "1",
+	  "Signature": "wqjA4qxKUJMUPKPR9KFMMsSA4F/66+ok2huJ/voad+zbI7aCd2lBR8pyYem6HizSfGGodFYgcBvj2u+UblNKKwXuzBWl//keUlkbEyq6WURuID4k9m4BE/By010v3HQmnuVDfArJD0PsnhUtnPbXL6031+nFr/h2A1lsuyqON4L9SN6n2WRzNHOMMZW6H6vIYXyrpSBN7f0ruut4jYvwGJOzy4fEAyrNForOHm9cX8YyWsZGiFMy0p9IhLt3hcTM5d1j7Ld49gDhV6f0TwGzG8vmaGN7776N3GNj6CiGRD3aG8LHeU0CSlIQndOrmKen8IBnLnrq372VSboAacLnYg==",
+	  "SigningCertURL": "https://sns.ap-southeast-1.amazonaws.com/SimpleNotificationService-010a507c1833636cd94bdb98bd93083a.pem",
+	  "UnsubscribeURL": "https://sns.ap-southeast-1.amazonaws.com/?Action=Unsubscribe&SubscriptionArn=arn:aws:sns:ap-southeast-1:988117108360:MockBkash:57bbfe14-f761-4bfc-9a5e-29ee932765f4",
+	  "SubscribeURL": "",
+	  "Subject": ""
 	}`
-	var notificationPayload models.WebhookData
+	var notificationPayload models.BkashIPNPayload
 
 	err := json.Unmarshal([]byte(notificationJson), &notificationPayload)
 	if err != nil {
