@@ -12,6 +12,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"reflect"
 	"strconv"
 )
 
@@ -501,62 +502,24 @@ func (b *Bkash) ExecutePayment(request *models.ExecutePaymentRequest, token *mod
 }
 
 // getMessageBytesToSign returns a byte array containing a signature usable for signature verification
-func getMessageBytesToSign(msg *models.WebhookData) []byte {
-	var bytesToSign []byte
-	if msg.Type == "Notification" {
-		bytesToSign = []byte(buildNotificationStringToSign(msg))
-	} else if msg.Type == "SubscriptionConfirmation" {
-		bytesToSign = []byte(buildSubscriptionStringToSign(msg))
+func getMessageBytesToSign(msg *models.BkashIPNPayload) []byte {
+	var builtSignature bytes.Buffer
+	signableKeys := []string{"Message", "MessageId", "Subject", "SubscribeURL", "Timestamp", "Token", "TopicArn", "Type"}
+	for _, key := range signableKeys {
+		reflectedStruct := reflect.ValueOf(msg)
+		field := reflect.Indirect(reflectedStruct).FieldByName(key)
+		value := field.String()
+		if field.IsValid() && value != "" {
+			builtSignature.WriteString(key + "\n")
+			builtSignature.WriteString(value + "\n")
+		}
 	}
-	return bytesToSign
-}
-
-// buildNotificationStringToSign builds message of Notification type
-func buildNotificationStringToSign(msg *models.WebhookData) string {
-	b, _ := json.Marshal(msg.Message)
-	message := string(b)
-
-	var stringToSign string
-	stringToSign = "Message\n"
-	stringToSign += message + "\n"
-	stringToSign += "MessageId\n"
-	stringToSign += msg.MessageId + "\n"
-	if msg.Subject != "" {
-		stringToSign += "Subject\n"
-		stringToSign += msg.Subject + "\n"
-	}
-	stringToSign += "Timestamp\n"
-	stringToSign += msg.Timestamp + "\n"
-	stringToSign += "TopicArn\n"
-	stringToSign += msg.TopicArn + "\n"
-	stringToSign += "Type\n"
-	stringToSign += msg.Type + "\n"
-	return stringToSign
-}
-
-// buildSubscriptionStringToSign builds message of SubscriptionConfirmation type
-func buildSubscriptionStringToSign(msg *models.WebhookData) string {
-	var stringToSign string
-	stringToSign = "Message\n"
-	stringToSign += msg.Message.(string) + "\n"
-	stringToSign += "MessageId\n"
-	stringToSign += msg.MessageId + "\n"
-	stringToSign += "SubscribeURL\n"
-	stringToSign += msg.SubscribeURL + "\n"
-	stringToSign += "Timestamp\n"
-	stringToSign += msg.Timestamp + "\n"
-	stringToSign += "Token\n"
-	stringToSign += msg.Token + "\n"
-	stringToSign += "TopicArn\n"
-	stringToSign += msg.TopicArn + "\n"
-	stringToSign += "Type\n"
-	stringToSign += msg.Type + "\n"
-	return stringToSign
+	return builtSignature.Bytes()
 }
 
 // IsMessageSignatureValid validates bkash IPN message signature. Returns true, nil if ok,
 // otherwise returns false, error
-func IsMessageSignatureValid(msg *models.WebhookData) error {
+func IsMessageSignatureValid(msg *models.BkashIPNPayload) error {
 	resp, err := http.Get(msg.SigningCertURL)
 	if err != nil {
 		return err
