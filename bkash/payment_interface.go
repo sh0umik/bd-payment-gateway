@@ -37,4 +37,7 @@ type BkashTokenizedCheckoutService interface {
 
 	// ExecutePayment executes the agreement using the paymentID received from CreateAgreementValidationResponse
 	ExecutePayment(request *models.ExecutePaymentRequest, token *models.Token, isLiveStore bool) (*models.ExecutePaymentResponse, error)
+
+	// QueryPayment query payment by paymentID
+	QueryPayment(request *models.QueryPaymentRequest, token *models.Token, isLiveStore bool) (*models.QueryPaymentResponse, error)
 }
