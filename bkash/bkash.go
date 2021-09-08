@@ -26,6 +26,7 @@ const BKASH_QUERY_AGREEMENT_URI = "/tokenized/checkout/agreement/status"
 const BKASH_CANCEL_AGREEMENT_URI = "/tokenized/checkout/agreement/cancel"
 const BKASH_CREATE_PAYMENT_URI = "/tokenized/checkout/create"
 const BKASH_EXECUTE_PAYMENT_URI = "/tokenized/checkout/execute"
+const BKASH_QUERY_PAYMENT_URI = "/tokenized/checkout/payment/status"
 
 var EMPTY_REQUIRED_FIELD = errors.New("empty required field")
 
@@ -493,6 +494,59 @@ func (b *Bkash) ExecutePayment(request *models.ExecutePaymentRequest, token *mod
 	}
 
 	var resp models.ExecutePaymentResponse
+	err = json.Unmarshal(body, &resp)
+	if err != nil {
+		return nil, err
+	}
+
+	return &resp, nil
+}
+
+func (b *Bkash) QueryPayment(request *models.QueryPaymentRequest, token *models.Token, isLiveStore bool) (*models.QueryPaymentResponse, error) {
+	// Mandatory field validation
+	if b.AppKey == "" || token.IdToken == "" || request.PaymentID == "" {
+		return nil, EMPTY_REQUIRED_FIELD
+	}
+
+	var storeUrl string
+	if isLiveStore {
+		storeUrl = BKASH_LIVE_GATEWAY
+	} else {
+		storeUrl = BKASH_SANDBOX_GATEWAY
+	}
+	u, _ := url.ParseRequestURI(storeUrl)
+	u.Path += BKASH_QUERY_PAYMENT_URI
+	//u.RawQuery = data.Encode()
+
+	queryPaymentURL := u.String()
+
+	jsonData, err := json.Marshal(request)
+	if err != nil {
+		return nil, err
+	}
+
+	client := &http.Client{}
+	r, err := http.NewRequest("POST", queryPaymentURL, bytes.NewReader(jsonData))
+	if err != nil {
+		return nil, err
+	}
+
+	r.Header.Add("Content-Type", "application/json")
+	r.Header.Add("Content-Length", strconv.Itoa(len(jsonData)))
+	r.Header.Add("Authorization", fmt.Sprintf("%s %s", token.TokenType, token.IdToken))
+	r.Header.Add("X-APP-Key", b.AppKey)
+
+	response, err := client.Do(r)
+	if err != nil {
+		return nil, err
+	}
+
+	body, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp models.QueryPaymentResponse
 	err = json.Unmarshal(body, &resp)
 	if err != nil {
 		return nil, err
