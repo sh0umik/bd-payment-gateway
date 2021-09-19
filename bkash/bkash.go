@@ -400,7 +400,7 @@ func (b *Bkash) CreatePayment(request *models.CreatePaymentRequest, token *model
 	}
 
 	// Mode validation
-	if request.Mode != "0001" {
+	if request.Mode != "0001" && request.Mode != "0011" {
 		return nil, errors.New("invalid mode value")
 	}
 
