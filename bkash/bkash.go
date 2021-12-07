@@ -453,7 +453,7 @@ func (b *Bkash) CreatePayment(request *models.CreatePaymentRequest, token *model
 	return &resp, nil
 }
 
-func (b *Bkash) ExecutePayment(request *models.ExecutePaymentRequest, token *models.Token, isLiveStore bool) (*models.ExecutePaymentResponse, error) {
+func (b *Bkash) ExecutePayment(request *models.ExecutePaymentRequest, token *models.Token, isLiveStore, debug bool) (*models.ExecutePaymentResponse, error) {
 	// Mandatory field validation
 	if b.AppKey == "" || token.IdToken == "" || request.PaymentID == "" {
 		return nil, EMPTY_REQUIRED_FIELD
@@ -490,6 +490,10 @@ func (b *Bkash) ExecutePayment(request *models.ExecutePaymentRequest, token *mod
 	r.Header.Add("Content-Length", strconv.Itoa(len(jsonData)))
 	r.Header.Add("Authorization", fmt.Sprintf("%s %s", token.TokenType, token.IdToken))
 	r.Header.Add("X-APP-Key", b.AppKey)
+
+	if debug {
+		time.Sleep(time.Second * 40)
+	}
 
 	response, err := client.Do(r)
 	if err != nil {
