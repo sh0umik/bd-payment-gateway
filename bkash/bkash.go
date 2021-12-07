@@ -2,6 +2,7 @@ package bkash
 
 import (
 	"bytes"
+	"context"
 	"crypto/x509"
 	"encoding/base64"
 	"encoding/json"
@@ -14,6 +15,7 @@ import (
 	"net/url"
 	"reflect"
 	"strconv"
+	"time"
 )
 
 const BKASH_SANDBOX_GATEWAY = "https://tokenized.sandbox.bka.sh/v1.2.0-beta"
@@ -29,6 +31,7 @@ const BKASH_EXECUTE_PAYMENT_URI = "/tokenized/checkout/execute"
 const BKASH_QUERY_PAYMENT_URI = "/tokenized/checkout/payment/status"
 
 var EMPTY_REQUIRED_FIELD = errors.New("empty required field")
+var TIMEOUT_ERROR = errors.New("api request timeout")
 
 type Bkash struct {
 	Username  string
@@ -478,6 +481,11 @@ func (b *Bkash) ExecutePayment(request *models.ExecutePaymentRequest, token *mod
 		return nil, err
 	}
 
+	ctx, cancel := context.WithTimeout(r.Context(), time.Second*30)
+	defer cancel()
+
+	r = r.WithContext(ctx)
+
 	r.Header.Add("Content-Type", "application/json")
 	r.Header.Add("Content-Length", strconv.Itoa(len(jsonData)))
 	r.Header.Add("Authorization", fmt.Sprintf("%s %s", token.TokenType, token.IdToken))
@@ -485,7 +493,39 @@ func (b *Bkash) ExecutePayment(request *models.ExecutePaymentRequest, token *mod
 
 	response, err := client.Do(r)
 	if err != nil {
-		return nil, err
+		// if error is timeout then call query payment
+		// if complete return success payload (*models.ExecutePaymentResponse, nil)
+		// if initiated - return something that should be handled by client (maybe return some kind of timeout error)
+		if errors.Is(err, context.DeadlineExceeded) {
+			queryResp, err := b.QueryPayment(&models.QueryPaymentRequest{PaymentID: request.PaymentID}, token, isLiveStore)
+			if err != nil {
+				return nil, err
+			}
+
+			if queryResp.StatusCode == "0000" && queryResp.TransactionStatus == "Completed" {
+				return &models.ExecutePaymentResponse{
+					PaymentID:             queryResp.PaymentID,
+					PayerReference:        queryResp.PayerReference,
+					PaymentExecuteTime:    queryResp.PaymentExecuteTime,
+					TrxID:                 queryResp.TrxID,
+					TransactionStatus:     queryResp.TransactionStatus,
+					Amount:                queryResp.Amount,
+					Currency:              queryResp.Currency,
+					Intent:                queryResp.Intent,
+					MerchantInvoiceNumber: queryResp.MerchantInvoiceNumber,
+					StatusCode:            queryResp.StatusCode,
+					StatusMessage:         queryResp.StatusMessage,
+					//AgreementID:           "",
+					//CustomerMsisdn:        "",
+					//AgreementExecuteTime:  "",
+					//AgreementStatus:       "",
+				}, nil
+			} else {
+				return nil, TIMEOUT_ERROR
+			}
+		} else {
+			return nil, err
+		}
 	}
 
 	body, err := ioutil.ReadAll(response.Body)
