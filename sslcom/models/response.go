@@ -101,7 +101,7 @@ type OrderValidationResponse struct {
 	RiskLevel                  string  `json:"risk_level"`
 	DiscountPercentage         string  `json:"discount_percentage"`
 	DiscountRemarks            string  `json:"discount_remarks"`
-	DiscountAmount             float64 `json:"discount_amount"`
+	DiscountAmount             float64 `json:"discount_amount,string"`
 	APIConnect                 string  `json:"APIConnect"`
 	ValidatedOn                string  `json:"validated_on"`
 	GwVersion                  string  `json:"gw_version"`
