@@ -268,7 +268,7 @@ func (s *SslCommerz) IPNListener(request *http.Request) (*models.IpnResponse, er
 	return &ipnResponse, nil
 }
 
-func (s *SslCommerz) OrderValidation(ipnValId string) (*models.IpnResponse, error) {
+func (s *SslCommerz) OrderValidation(ipnValId string) (*models.OrderValidationResponse, error) {
 	data := url.Values{}
 
 	data.Set("val_id", ipnValId)
@@ -307,7 +307,7 @@ func (s *SslCommerz) OrderValidation(ipnValId string) (*models.IpnResponse, erro
 		return nil, err
 	}
 
-	var resp models.IpnResponse
+	var resp models.OrderValidationResponse
 	err = json.Unmarshal(body, &resp)
 	if err != nil {
 		return nil, err

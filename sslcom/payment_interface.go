@@ -14,7 +14,7 @@ type PaymentService interface {
 	IPNListener(request *http.Request) (*models.IpnResponse, error)
 
 	// Validate the IPN Response
-	OrderValidation(valId string) (*models.IpnResponse, error)
+	OrderValidation(valId string) (*models.OrderValidationResponse, error)
 
 	// 	Order Validation
 	CheckValidation(request *models.OrderValidationRequest) (*models.OrderValidationResponse, error)
