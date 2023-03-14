@@ -12,7 +12,7 @@ func TestCreateSession(t *testing.T) {
 	storeId := os.Getenv("SSLCOM_STORE_ID")
 	storePass := os.Getenv("SSLCOM_STORE_PASSWORD")
 
-	sslCom := sslcom.GetSslCommerz(storeId, storePass)
+	sslCom := sslcom.GetSslCommerz(storeId, storePass, false)
 	paymentService := sslcom.PaymentService(sslCom)
 
 	sessionRequest := &models2.RequestValue{
@@ -43,10 +43,10 @@ func TestCreateSession(t *testing.T) {
 		MultiCardName:    []string{"bkash"},
 		ValueA:           "706633169",
 		ValueB:           "288580",
-		ValueC: 		  "3",
+		ValueC:           "3",
 	}
 
-	sessionResponse, err := paymentService.CreateSession(sessionRequest, false)
+	sessionResponse, err := paymentService.CreateSession(sessionRequest)
 	if err != nil {
 		t.Error(err.Error())
 	}

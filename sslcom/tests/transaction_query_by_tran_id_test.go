@@ -12,7 +12,7 @@ func TestTransactionQueryByTranID(t *testing.T) {
 	storeId := os.Getenv("SSLCOM_STORE_ID")
 	storePass := os.Getenv("SSLCOM_STORE_PASSWORD")
 
-	sslCom := sslcom.GetSslCommerz(storeId, storePass)
+	sslCom := sslcom.GetSslCommerz(storeId, storePass, false)
 	paymentService := sslcom.PaymentService(sslCom)
 
 	data := models2.TransactionQueryRequest{
@@ -22,7 +22,7 @@ func TestTransactionQueryByTranID(t *testing.T) {
 		Format:     "json",
 	}
 
-	tranResponse, err := paymentService.TransactionQueryByTID(&data, false)
+	tranResponse, err := paymentService.TransactionQueryByTID(&data)
 	if err != nil {
 		t.Log(err.Error())
 	}

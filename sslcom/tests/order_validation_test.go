@@ -3,7 +3,6 @@ package tests
 import (
 	"github.com/sh0umik/bd-payment-gateway/sslcom"
 	models2 "github.com/sh0umik/bd-payment-gateway/sslcom/models"
-	"os"
 	"testing"
 )
 
@@ -16,28 +15,37 @@ value_c=ref003_C&value_d=ref004_D'
 
 func TestOrderValidation(t *testing.T) {
 
-	storeId := os.Getenv("SSLCOM_STORE_ID")
-	storePass := os.Getenv("SSLCOM_STORE_PASSWORD")
+	storeId := "shikh5f43ed6eb1bc8"
+	storePass := "shikh5f43ed6eb1bc8@ssl"
 
-	sslCom := sslcom.GetSslCommerz(storeId, storePass)
+	sslCom := sslcom.GetSslCommerz(storeId, storePass, false)
 	paymentService := sslcom.PaymentService(sslCom)
 
 	data := models2.OrderValidationRequest{
-		ValId:  "1709162025351ElIuHtUtFReBwE",
+		ValId:  "230314111712tvDmtdz89RYvRhG",
 		Format: "json",
 		V:      1,
 	}
 
-	orderResponse, err := paymentService.CheckValidation(&data, false)
-
+	orderResponse, err := paymentService.CheckValidation(&data)
 	if err != nil {
 		t.Log(err.Error())
 	}
 	t.Log(orderResponse)
 
 	// #todo check response and error
-	if orderResponse.Status != "VALID" {
+	if orderResponse.Status != "VALID" && orderResponse.Status != "VALIDATED" {
 		t.Errorf("Order validation not successful")
 	}
 
+	orderResp, err := paymentService.OrderValidation("230314111712tvDmtdz89RYvRhG")
+	if err != nil {
+		t.Log(err.Error())
+	}
+	t.Log(orderResp)
+
+	// #todo check response and error
+	if orderResp.Status != "VALID" && orderResp.Status != "VALIDATED" {
+		t.Errorf("Order validation not successful")
+	}
 }
